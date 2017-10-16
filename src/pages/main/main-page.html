@@ -1,0 +1,50 @@
+<ion-content padding class="main-page">
+  <p text-center>
+    Welcome
+  </p>
+
+  <ion-list class="form-login">
+    <ion-label class="field-label">Email</ion-label>
+    <ion-item class="row-field">
+      <ion-input type="email" [(ngModel)]="loginData.email"></ion-input>
+    </ion-item>
+
+    <ion-label class="field-label">Password</ion-label>
+    <ion-item class="row-field">
+      <ion-input type="password" [(ngModel)]="loginData.password"></ion-input>
+    </ion-item>
+  </ion-list>
+
+  <ion-row class="btn-login-signup">
+    <ion-col>
+      <button full ion-button outline (click)="doLogin()">Login</button>
+    </ion-col>
+
+    <ion-col>
+      <button full ion-button outline color="dark" (click)="openSignupPage()">Signup</button>
+    </ion-col>
+  </ion-row>
+
+  <p text-center>
+    OR
+  </p>
+
+  <ion-row class="btn-social">
+    <ion-col>
+      <button ion-button block icon-left color="danger" class="btn-google" (click)="doGoogleLogin()">
+        <ion-icon name="logo-googleplus"></ion-icon>
+        Sign in with Google
+      </button>
+    </ion-col>
+  </ion-row>
+
+  <ion-row class="btn-social">
+    <ion-col>
+      <button ion-button block icon-left color="primary" class="btn-fb" (click)="doFacebookLogin()">
+        <ion-icon name="logo-facebook"></ion-icon>
+        Connect to Facebook
+      </button>
+    </ion-col>
+  </ion-row>
+
+</ion-content>
