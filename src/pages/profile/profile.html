@@ -7,6 +7,80 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content>
-  Profile Page
+<ion-content padding class="main-page">
+  <ion-list class="form-login">
+    <div>
+      <ion-item text-center no-padding class="profile-image" (click)="openCameraActionSheet()">
+        <div class="profile-image">
+          <img class="circle-pic" src="{{loginData.profile_image}}" style="height: 100px; width: 100px" />
+        </div>
+      </ion-item>
+    </div>
+
+    <div>
+      <ion-label class="field-label">Username</ion-label>
+      <ion-item class="row-field">
+        <ion-input type="text" [(ngModel)]="loginData.user_name"></ion-input>
+      </ion-item>
+    </div>
+
+    <div>
+      <ion-label class="field-label">Email</ion-label>
+      <ion-item class="row-field">
+        <ion-input type="email" [(ngModel)]="loginData.email"></ion-input>
+      </ion-item>
+    </div>
+
+    <div>
+      <ion-label class="field-label">Mobile</ion-label>
+      <ion-item class="row-field">
+        <ion-input type="tel" [(ngModel)]="loginData.mobile_no"></ion-input>
+      </ion-item>
+    </div>
+
+    <div>
+      <ion-row no-padding>
+        <ion-col col-2 no-padding>
+          <p item-start margin-left class="task_label">Gender</p>
+        </ion-col>
+
+        <ion-col col-10 no-padding>
+          <ion-row no-padding radio-group [(ngModel)]="loginData.gender">
+            <ion-col no-padding>
+              <ion-item no-lines no-padding class="transparent">
+                <ion-label>Male</ion-label>
+                <ion-radio item-left value="male" class="radio_mg"></ion-radio>
+              </ion-item>
+            </ion-col>
+
+            <ion-col no-padding>
+              <ion-item no-lines no-padding class="transparent">
+                <ion-label>Female</ion-label>
+                <ion-radio item-left value="female" class="radio_mg"></ion-radio>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-col>
+      </ion-row>
+    </div>
+
+    <ion-label class="field-label">Job</ion-label>
+    <ion-item class="row-field">
+      <ion-select class="custom-select" [(ngModel)]="loginData.job_type" [selectOptions]="SelectOptions">
+        <ion-option *ngFor="let item of mJobTypeListDD" value="{{item.key}}">
+          {{item.value}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-label class="field-label">Message</ion-label>
+    <ion-item class="row-field">
+      <ion-textarea [(ngModel)]="loginData.message" rows="5" placeholder=""></ion-textarea>
+    </ion-item>
+  </ion-list>
+
 </ion-content>
+
+<ion-footer no-padding no-margin class="custom-footer">
+  <button ion-button full no-padding no-margin (click)="onClickUpdate()">Update</button>
+</ion-footer>

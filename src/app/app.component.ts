@@ -10,6 +10,9 @@ import { MainPage } from '../pages/main/main-page';
 import { HomePage } from '../pages/home/home';
 import { ProfilePage } from '../pages/profile/profile';
 
+import { AppConfig } from '../providers/AppConfig';
+
+
 @Component({
   templateUrl: 'app.html'
 })
@@ -23,7 +26,8 @@ export class MyApp {
     public platform: Platform,
     public statusBar: StatusBar,
     public splashScreen: SplashScreen,
-    public storageCtrl: Storage) {
+    public storageCtrl: Storage,
+    public appConfig: AppConfig) {
     this.initializeApp();
 
     // used for an example of ngFor and navigation
@@ -48,16 +52,25 @@ export class MyApp {
 
   checkPageRedirection() {
     this.storageCtrl.get('isTutorialShow').then((value) => {
-      if (value != null && value == true) {
+
+      if (value == null || value == true) {
         this.rootPage = IntroPage;
       } else {
-        this.rootPage = MainPage;
+        this.storageCtrl.get('userData').then((data) => {
+          if (data != null && data != "" && Object.keys(data).length > 0) {
+            if (data.isUserLoggedIn) {
+              this.appConfig.mUserData = data;
+
+              this.rootPage = HomePage;
+            } else {
+              this.rootPage = MainPage;
+            }
+          } else {
+            this.rootPage = MainPage;
+          }
+        });
       }
     });
-  }
-
-  doLogout() {
-    this.navCtrl.setRoot(MainPage);
   }
 
 }

@@ -10,6 +10,8 @@ import { AppConfig, AppMsgConfig } from '../../providers/AppConfig';
 })
 
 export class HomePage {
+  public mUserName: string = "";
+  public mUserId: string = "";
 
   constructor(
     public navCtrl: NavController,
@@ -18,10 +20,15 @@ export class HomePage {
   ) {
   }
 
+  ionViewDidEnter() {
+    this.mUserName = this.appConfig.mUserData.user_name;
+    this.mUserId = this.appConfig.mUserData.user_id;
+  }
+
   doLogout() {
     this.appConfig.showToast(this.appMsgConfig.LogoutSuccessMsg, "bottom", 3000, true, "Ok", true);
 
-    this.appConfig.isUserLoggedIn = false;
+    this.appConfig.clearLoginUserData();
     this.navCtrl.setRoot(MainPage);
   }
 

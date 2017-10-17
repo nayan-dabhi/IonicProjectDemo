@@ -20,7 +20,14 @@ export class AppConfig {
 
   // App User Data
   public mUserData: any;
-  public isUserLoggedIn: boolean = false;
+  public mJobListDD: any = [{
+    key:'1', value: 'Teacher'
+  }, {
+    key:'2', value: 'Artists'
+  },{
+    key:'3', value: 'IT/Software Developer'
+  }];
+
 
   constructor(
     public device: Device,
@@ -76,6 +83,12 @@ export class AppConfig {
         resolve(null);
       }
     });
+  }
+
+  clearLoginUserData() {
+    this.mUserData = [];
+
+    this.clearStorageByKey('userData');
   }
 
   getFormattedArray(object: any) {

@@ -14,6 +14,10 @@ import { AppVersion } from '@ionic-native/app-version';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
 import { GooglePlus } from '@ionic-native/google-plus';
 import { Facebook } from '@ionic-native/facebook';
+import { Camera } from '@ionic-native/camera';
+import { File } from '@ionic-native/file';
+import { FilePath } from '@ionic-native/file-path';
+import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer';
 
 
 import { MyApp } from './app.component';
@@ -72,6 +76,11 @@ import { AppConfig, AppMsgConfig } from '../providers/AppConfig';
     InAppBrowser,
     GooglePlus,
     Facebook,
+    Camera,
+    File,
+    FilePath,
+    FileTransfer,
+    FileTransferObject,
     { provide: ErrorHandler, useClass: IonicErrorHandler }
   ]
 })
