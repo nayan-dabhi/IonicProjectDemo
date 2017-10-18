@@ -8,7 +8,7 @@ import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer';
 import { Storage } from '@ionic/storage';
 
 import { AppConfig, AppMsgConfig } from '../../providers/AppConfig';
-
+import { UserServiceProvider } from "../../providers/UserServiceProvider";
 
 @Component({
   selector: 'page-profile',
@@ -20,10 +20,10 @@ export class ProfilePage {
     user_id: '',
     user_name: '',
     email: '',
-    mobile_no: '',
+    phone: '',
     password: '',
     gender: '',
-    job_type: '',
+    job: '',
     message: '',
     profile_image: '',
     isUserLoggedIn: false,
@@ -54,6 +54,7 @@ export class ProfilePage {
     public filePath: FilePath,
     public transfer: FileTransfer,
     public storageCtrl: Storage,
+    public userService: UserServiceProvider,
   ) {
   }
 
@@ -227,6 +228,31 @@ export class ProfilePage {
     return isValidate;
   }
 
+  // onClickUpdate() {
+  //   if (this.validateForm()) {
+  //     let mAlertSubmit = this.alertCtrl.create({
+  //       title: "Profile",
+  //       subTitle: "Are you sure you want to update this data?",
+  //       buttons: [{
+  //         text: this.appMsgConfig.No
+  //       }, {
+  //         text: this.appMsgConfig.Yes,
+  //         handler: data => {
+  //           this.storageCtrl.set('userData', this.loginData).then(() => {
+  //             this.appConfig.mUserData = this.loginData;
+  //
+  //             this.appConfig.showToast("Profile updated successfully.", "bottom", 3000, true, "Ok", true);
+  //           }, (error) => {
+  //             // console.log("storage error", error);
+  //           });
+  //         }
+  //       }]
+  //     });
+  //
+  //     mAlertSubmit.present();
+  //   }
+  // }
+
   onClickUpdate() {
     if (this.validateForm()) {
       let mAlertSubmit = this.alertCtrl.create({
@@ -237,18 +263,52 @@ export class ProfilePage {
         }, {
           text: this.appMsgConfig.Yes,
           handler: data => {
-            this.storageCtrl.set('userData', this.loginData).then(() => {
-              this.appConfig.mUserData = this.loginData;
-
-              this.appConfig.showToast("Profile updated successfully.", "bottom", 3000, true, "Ok", true);
-            }, (error) => {
-              // console.log("storage error", error);
-            });
+            this.submitData();
           }
         }]
       });
 
       mAlertSubmit.present();
+    }
+  }
+
+  submitData() {
+    if (this.appConfig.hasConnection()) {
+      this.appConfig.showLoading(this.appMsgConfig.Loading);
+      let post_params = [{ "key": "action", "value": "update" },
+      { "key": "user_name", "value": this.loginData.user_name },
+      { "key": "email", "value": this.loginData.email },
+      { "key": "phone", "value": this.loginData.phone },
+      { "key": "pass", "value": this.loginData.password },
+      { "key": "gender", "value": this.loginData.gender },
+      { "key": "picture", "value": this.loginData.profile_image },
+      { "key": "job", "value": this.loginData.job },
+      { "key": "message", "value": this.loginData.message }];
+
+      this.userService.signUpUser(post_params).then((data) => {
+        let apiResult: any = data;
+
+        if (apiResult.status.toString().trim().toLowerCase() == "success") {
+
+          this.storageCtrl.set('userData', this.loginData).then(() => {
+            this.appConfig.mUserData = this.loginData;
+
+            this.appConfig.showToast("Profile updated successfully.", "bottom", 3000, true, "Ok", true);
+          }, (error) => {
+            // console.log("storage error", error);
+            this.appConfig.showToast("Profile not updated successfully.", "bottom", 3000, true, "Ok", true);
+          });
+
+          this.appConfig.hideLoading();
+        } else {
+          this.appConfig.hideLoading();
+          this.appConfig.showToast(apiResult.message, "bottom", 3000, true, "Ok", true);
+        }
+      }).catch(e => {
+        this.appConfig.hideLoading();
+      })
+    } else {
+      this.appConfig.showToast(this.appMsgConfig.NoInternetMsg, "bottom", 3000, true, "Ok", true);
     }
   }
 

@@ -9,6 +9,7 @@ import { AppConfig, AppMsgConfig } from '../../providers/AppConfig';
 import { HomePage } from '../home/home';
 import { RegisterPage } from '../register/register';
 
+import { UserServiceProvider } from "../../providers/UserServiceProvider";
 
 @Component({
   selector: 'page-main',
@@ -28,6 +29,7 @@ export class MainPage {
     public googlePlus: GooglePlus,
     public facebook: Facebook,
     public storageCtrl: Storage,
+    public userService: UserServiceProvider
   ) {
   }
 
@@ -71,30 +73,43 @@ export class MainPage {
       if (this.appConfig.hasConnection()) {
         this.appConfig.showLoading(this.appMsgConfig.Loading);
 
-        let userData = {
-          user_id: '',
-          user_name: '',
-          email: this.loginData.email,
-          mobile_no: '',
-          password: '',
-          gender: '',
-          job_type: '',
-          message: '',
-          profile_image: 'assets/img/event_placeholder.png',
-          isUserLoggedIn: true,
-          isSocialLogin: false,
-          socialLoginType: "",
-        };
+        this.userService.login(this.loginData.email, this.loginData.password).then((data) => {
+          let apiResult: any = data;
+          if (apiResult.status.toString().toLowerCase() == "success") {
+            let userData = {
+              user_id: apiResult.user[0].id,
+              user_name: '',
+              email: apiResult.user[0].email,
+              phone: apiResult.user[0].phone_no,
+              password: apiResult.user[0].password,
+              gender: (apiResult.user[0].gender.toString().toLowerCase() == "male") ? 1 : 2,
+              job: apiResult.user[0].job,
+              message: apiResult.user[0].message,
+              profile_image: apiResult.user[0].p_avatar,
+              isUserLoggedIn: true,
+              isSocialLogin: false,
+              socialLoginType: "",
+            };
+            this.appConfig.mUserData = userData;
+            this.storageCtrl.set('userData', userData).then(() => {
+              this.appConfig.hideLoading();
+              this.appConfig.mUserData = userData;
 
-        this.storageCtrl.set('userData', userData).then(() => {
-          this.appConfig.hideLoading();
-          this.appConfig.mUserData = userData;
-
-          this.navCtrl.setRoot(HomePage);
-        }, (error) => {
-          // console.log("storage error", error);
+              setTimeout(()=>{
+                this.navCtrl.setRoot(HomePage);
+              },3000);
+              
+            }, (error) => {
+              // console.log("storage error", error);
+            });
+            this.appConfig.hideLoading();
+            this.appConfig.showToast(apiResult.result, "bottom", 3000, true, "Ok", true);
+          }else {
+            this.appConfig.showToast(apiResult.result, "bottom", 3000, true, "Ok", true);
+          }
         });
       } else {
+        this.appConfig.hideLoading();
         this.appConfig.showToast(this.appMsgConfig.NoInternetMsg, "bottom", 3000, true, "Ok", true);
       }
     }

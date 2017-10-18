@@ -31,7 +31,7 @@
     <div *ngIf="!isSocialLogin">
       <ion-label class="field-label">Mobile</ion-label>
       <ion-item class="row-field">
-        <ion-input type="tel" [(ngModel)]="loginData.mobile_no"></ion-input>
+        <ion-input type="tel" [(ngModel)]="loginData.phone"></ion-input>
       </ion-item>
     </div>
 
@@ -53,14 +53,14 @@
             <ion-col no-padding>
               <ion-item no-lines no-padding class="transparent">
                 <ion-label>Male</ion-label>
-                <ion-radio item-left value="male" class="radio_mg"></ion-radio>
+                <ion-radio item-left value="1" class="radio_mg"></ion-radio>
               </ion-item>
             </ion-col>
 
             <ion-col no-padding>
               <ion-item no-lines no-padding class="transparent">
                 <ion-label>Female</ion-label>
-                <ion-radio item-left value="female" class="radio_mg"></ion-radio>
+                <ion-radio item-left value="2" class="radio_mg"></ion-radio>
               </ion-item>
             </ion-col>
           </ion-row>
@@ -70,7 +70,7 @@
 
     <ion-label class="field-label">Job</ion-label>
     <ion-item class="row-field">
-      <ion-select class="custom-select" [(ngModel)]="loginData.job_type" [selectOptions]="SelectOptions">
+      <ion-select class="custom-select" [(ngModel)]="loginData.job" [selectOptions]="SelectOptions">
         <ion-option *ngFor="let item of mJobTypeListDD" value="{{item.key}}">
           {{item.value}}
         </ion-option>

@@ -10,6 +10,7 @@ import { Storage } from '@ionic/storage';
 import { AppConfig, AppMsgConfig } from '../../providers/AppConfig';
 import { HomePage } from '../home/home';
 
+import { UserServiceProvider } from "../../providers/UserServiceProvider";
 
 @Component({
   selector: 'page-register',
@@ -26,15 +27,15 @@ export class RegisterPage {
     user_id: '',
     user_name: '',
     email: '',
-    mobile_no: '',
+    phone: '',
     password: '',
     gender: '',
-    job_type: '',
+    job: '',
     message: '',
     profile_image: 'assets/img/event_placeholder.png',
-    isUserLoggedIn : false,
-    isSocialLogin : false,
-    socialLoginType : "",
+    isUserLoggedIn: false,
+    isSocialLogin: false,
+    socialLoginType: "",
   };
 
   public SelectOptions = {
@@ -60,6 +61,7 @@ export class RegisterPage {
     public filePath: FilePath,
     public transfer: FileTransfer,
     public storageCtrl: Storage,
+    public userService: UserServiceProvider
   ) {
   }
 
@@ -285,26 +287,57 @@ export class RegisterPage {
         }, {
           text: this.appMsgConfig.Yes,
           handler: data => {
-            this.loginData.isUserLoggedIn = true;
-            this.loginData.isSocialLogin = this.isSocialLogin;
-            this.loginData.socialLoginType = this.socialLoginType;
-
-            this.storageCtrl.set('userData', this.loginData).then(() => {
-              this.appConfig.showToast("User register successfully.", "bottom", 3000, true, "Ok", true);
-
-              this.appConfig.mUserData = this.loginData;
-
-              setTimeout(() => {
-                this.navCtrl.setRoot(HomePage);
-              }, 500);
-            }, (error) => {
-              // console.log("storage error", error);
-            });
+            this.submitData();
           }
         }]
       });
 
       mAlertSubmit.present();
+    }
+  }
+
+  submitData() {
+    if (this.appConfig.hasConnection()) {
+      this.appConfig.showLoading(this.appMsgConfig.Loading);
+      let post_params = [{ "key": "action", "value": "registration" },
+      { "key": "user_name", "value": this.loginData.user_name },
+      { "key": "email", "value": this.loginData.email },
+      { "key": "phone", "value": this.loginData.phone },
+      { "key": "pass", "value": this.loginData.password },
+      { "key": "gender", "value": this.loginData.gender },
+      { "key": "picture", "value": this.loginData.profile_image },
+      { "key": "job", "value": this.loginData.job },
+      { "key": "message", "value": this.loginData.message }];
+
+      this.userService.signUpUser(post_params).then((data) => {
+        let apiResult: any = data;
+
+        if (apiResult.status.toString().trim().toLowerCase() == "success") {
+          this.loginData.isUserLoggedIn = true;
+          this.loginData.isSocialLogin = this.isSocialLogin;
+          this.loginData.socialLoginType = this.socialLoginType;
+
+          this.storageCtrl.set('userData', this.loginData).then(() => {
+            this.appConfig.showToast(apiResult.message, "bottom", 3000, true, "Ok", true);
+
+            this.appConfig.mUserData = this.loginData;
+            setTimeout(() => {
+              this.navCtrl.setRoot(HomePage);
+            }, 500);
+            this.appConfig.hideLoading();
+          }, (error) => {
+            // console.log("storage error", error);
+            this.appConfig.hideLoading();
+          });
+        } else {
+          this.appConfig.hideLoading();
+          this.appConfig.showToast(apiResult.message, "bottom", 3000, true, "Ok", true);
+        }
+      }).catch(e => {
+        this.appConfig.hideLoading();
+      })
+    } else {
+      this.appConfig.showToast(this.appMsgConfig.NoInternetMsg, "bottom", 3000, true, "Ok", true);
     }
   }
 

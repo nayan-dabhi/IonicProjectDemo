@@ -30,7 +30,7 @@ import { ProfilePage } from '../pages/profile/profile';
 
 // Services
 import { AppConfig, AppMsgConfig } from '../providers/AppConfig';
-
+import { UserServiceProvider } from "../providers/UserServiceProvider";
 
 @NgModule({
   declarations: [
@@ -67,6 +67,7 @@ import { AppConfig, AppMsgConfig } from '../providers/AppConfig';
   providers: [
     AppConfig,
     AppMsgConfig,
+    UserServiceProvider,
     Device,
     Network,
     StatusBar,
