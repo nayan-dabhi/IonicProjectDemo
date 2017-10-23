@@ -63,6 +63,7 @@ export class ProfilePage {
 
     if (this.appConfig != null && this.appConfig.mUserData != "") {
       this.loginData = this.appConfig.mUserData;
+      console.log(this.loginData);
     }
   }
 
@@ -275,7 +276,8 @@ export class ProfilePage {
   submitData() {
     if (this.appConfig.hasConnection()) {
       this.appConfig.showLoading(this.appMsgConfig.Loading);
-      let post_params = [{ "key": "action", "value": "update" },
+      let post_params = [{ "key": "action", "value": "update-profile" },
+      { "key" :"id" , "value" : this.loginData.user_id},
       { "key": "user_name", "value": this.loginData.user_name },
       { "key": "email", "value": this.loginData.email },
       { "key": "phone", "value": this.loginData.phone },
